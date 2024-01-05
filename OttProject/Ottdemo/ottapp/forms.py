@@ -2,9 +2,17 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
-class LoginForm(AuthenticationForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['username'].help_text = None  # Remove username guidelines
-        self.fields['password'].help_text = None  # Remove password guidelines
+from .models import Customer
 
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput)
+
+class CustomerRegistrationForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['firstname', 'lastname', 'email', 'username', 'password', 'DoB', 'phonenumber']
+        widgets = {
+            'password1': forms.PasswordInput(),
+        }

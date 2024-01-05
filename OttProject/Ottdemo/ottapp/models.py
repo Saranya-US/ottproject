@@ -2,7 +2,7 @@ from django.contrib.auth.models import User, AbstractUser, Group, Permission
 from django.db import models
 
 
-class customer(models.Model):
+class Customer(models.Model):
     firstname = models.CharField(max_length=50)
     lastname = models.CharField(max_length=50)
     email = models.EmailField(unique=True)
@@ -15,5 +15,3 @@ class customer(models.Model):
     # groups = models.ManyToManyField(Group, related_name='customer_groups')
     # user_permissions = models.ManyToManyField(Permission, related_name='customer_user_permissions')
 
-    def __str__(self):
-        return self.firstname

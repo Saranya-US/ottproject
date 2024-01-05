@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import customer
+from .models import Customer
 
 # Register your models here.
-admin.site.register(customer)
+@admin.register(Customer)
+class CustomerAdmin(admin.ModelAdmin):
+    list_display = ('firstname','username', 'password', 'email','phonenumber')  # Customize the fields you want to display
