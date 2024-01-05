@@ -16,3 +16,8 @@ class CustomerRegistrationForm(forms.ModelForm):
         widgets = {
             'password1': forms.PasswordInput(),
         }
+
+
+
+class ProfileForm(forms.Form):
+    name = forms.CharField(max_length=255)

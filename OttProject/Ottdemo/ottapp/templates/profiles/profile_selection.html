@@ -1,0 +1,21 @@
+<!-- profiles/templates/profiles/profile_selection.html -->
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Your Profiles</h2>
+    <div class="row">
+        {% for profile in profiles %}
+            <div class="col-md-4 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ profile.name }}</h5>
+                        <!-- You can add additional details or actions here -->
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    <a href="{% url 'add_profile' %}" class="btn btn-primary">Add Profile</a>
+</div>
+{% endblock %}

@@ -15,3 +15,9 @@ class Customer(models.Model):
     # groups = models.ManyToManyField(Group, related_name='customer_groups')
     # user_permissions = models.ManyToManyField(Permission, related_name='customer_user_permissions')
 
+
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255)
+

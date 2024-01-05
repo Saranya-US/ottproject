@@ -1,8 +1,8 @@
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.contrib.auth import login,authenticate
-from .forms import LoginForm,CustomerRegistrationForm
-from .models import Customer  # Corrected model name to follow PEP8 conventions
+from .forms import LoginForm, CustomerRegistrationForm, ProfileForm
+from .models import Customer, Profile  # Corrected model name to follow PEP8 conventions
 
 def login_view(request):
     form = LoginForm()
@@ -16,7 +16,7 @@ def login_view(request):
             try:
                 customer = Customer.objects.get(username=username)
                 if customer.password == password:
-                    return render(request, 'home.html')
+                    return render(request, 'profiles/add_profile.html')
                 else:
                     form.add_error(None, 'Invalid credentials')
             except Customer.DoesNotExist:
@@ -38,4 +38,21 @@ def register_view(request):
 
 def home(request):
     return render(request,'home.html')
+
+
+def profile_selection(request):
+    profiles = Profile.objects.filter(user=request.user)
+    return render(request, 'profiles/profile_selection.html', {'profiles': profiles})
+
+def add_profile(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.user = request.user
+            profile.save()
+            return redirect('profile_selection')
+    else:
+        form = ProfileForm()
+    return render(request, 'profiles/profile_selection.html', {'form': form})
 
