@@ -1,23 +1,22 @@
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from .forms import SignUpForm
+from .forms import LoginForm
 from .models import customer  # Corrected model name to follow PEP8 conventions
 
-def login_user(request):
+class CustomLoginView(LoginView):
+    form_class = LoginForm
+    template_name = 'login.html'
+
+def registration_view(request):
     if request.method == 'POST':
-        form = SignUpForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-
-            # Create a user profile
-            customer.objects.create(user=user)
-
-            login(request, user)
-            return redirect('home')
+        # Process the form data (handle registration logic here)
+        pass
     else:
-        form = SignUpForm()
-    return render(request, template_name='login.html', context={'form': form})
+        # Display the registration form
+        return render(request, 'register_form.html')
 
 
 def home(request):
     return render(request,'home.html')
+
