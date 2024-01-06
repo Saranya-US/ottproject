@@ -2,7 +2,7 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
 from django.contrib.auth import login,authenticate
 from .forms import LoginForm, CustomerRegistrationForm, ProfileForm
-from .models import Customer, Profile  # Corrected model name to follow PEP8 conventions
+from .models import Customer, Profile, UserProfile  # Corrected model name to follow PEP8 conventions
 
 def login_view(request):
     form = LoginForm()
@@ -55,4 +55,8 @@ def add_profile(request):
     else:
         form = ProfileForm()
     return render(request, 'profiles/profile_selection.html', {'form': form})
+
+def profile_list(request):
+    profiles = UserProfile.objects.all()
+    return render(request, 'welcome.html', {'profiles': profiles})
 

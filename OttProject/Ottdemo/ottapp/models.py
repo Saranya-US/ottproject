@@ -21,3 +21,7 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
 
+class UserProfile(models.Model):
+    name = models.CharField(max_length=100)
+    bio = models.TextField()
+    image = models.ImageField(upload_to='profile_images/')

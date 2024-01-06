@@ -1,0 +1,19 @@
+<!-- profiles/templates/profiles/profile_list.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Netflix Profiles</title>
+</head>
+<body>
+    <h1>Netflix Profiles</h1>
+    <div>
+        {% for profile in profiles %}
+            <div>
+                <h2>{{ profile.name }}</h2>
+                <p>{{ profile.bio }}</p>
+                <img src="{{ profile.image.url }}" alt="{{ profile.name }}">
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
