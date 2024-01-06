@@ -58,5 +58,6 @@ def add_profile(request):
 
 def profile_list(request):
     profiles = UserProfile.objects.all()
+    print("list")
     return render(request, 'welcome.html', {'profiles': profiles})
 
