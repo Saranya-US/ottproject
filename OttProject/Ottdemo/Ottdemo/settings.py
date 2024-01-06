@@ -93,16 +93,16 @@ WSGI_APPLICATION = 'Ottdemo.wsgi.application'
 # }
 
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'ott',
-        'USER': 'root',
-        'PASSWORD':'stiji@2001',
-        'HOST':'localhost',
-        'PORT': 3306
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'ott',
+#         'USER': 'root',
+#         'PASSWORD':'stiji@2001',
+#         'HOST':'localhost',
+#         'PORT': 3306
+#     }
+# }
 
 
 # Password validation
