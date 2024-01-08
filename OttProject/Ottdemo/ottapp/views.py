@@ -1,8 +1,13 @@
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login,authenticate
-from .forms import LoginForm, CustomerRegistrationForm, ProfileForm
-from .models import Customer, Profile, UserProfile  # Corrected model name to follow PEP8 conventions
+from .forms import LoginForm, CustomerRegistrationForm,UserProfileForm
+from .models import Customer,UserProfile  # Corrected model name to follow PEP8 conventions
+from django.contrib.auth.models import User
+from django.shortcuts import render, redirect
+from .forms import UserProfileForm
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
 
 def login_view(request):
     form = LoginForm()
@@ -16,7 +21,7 @@ def login_view(request):
             try:
                 customer = Customer.objects.get(username=username)
                 if customer.password == password:
-                    return render(request, 'profiles/add_profile.html')
+                    return render(request, 'profiles/profile_selection.html')
                 else:
                     form.add_error(None, 'Invalid credentials')
             except Customer.DoesNotExist:
@@ -41,22 +46,56 @@ def home(request):
 
 
 def profile_selection(request):
-    profiles = Profile.objects.filter(user=request.user)
+    profiles = UserProfile.objects.filter(user=request.user)
     return render(request, 'profiles/profile_selection.html', {'profiles': profiles})
 
+
+@login_required
 def add_profile(request):
     if request.method == 'POST':
-        form = ProfileForm(request.POST)
+        form = UserProfileForm(request.POST, request.FILES)
         if form.is_valid():
             profile = form.save(commit=False)
-            profile.user = request.user
+            profile.customer = request.user
             profile.save()
+            messages.success(request, 'Profile added successfully.')
             return redirect('profile_selection')
+        else:
+            messages.error(request, 'Form is not valid.')
     else:
-        form = ProfileForm()
-    return render(request, 'profiles/profile_selection.html', {'form': form})
+        form = UserProfileForm()
+
+    return render(request, 'profiles/add_profile.html', {'form': form})
+
+
+
+def profile(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+    return render(request, 'profiles/profile.html', {'user_profile': user_profile})
+
+
+def edit_profile(request):
+    user_profile = UserProfile.objects.get(user=request.user)
+
+    if request.method == 'POST':
+        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
+        if form.is_valid():
+            form.save()
+            return redirect('profile')
+    else:
+        form = UserProfileForm(instance=user_profile)
+
+    return render(request, 'profiles/edit_profile.html', {'form': form})
+
+# views.py
+
+
+
+def view_profile(request, user_id):
+    userprofile = get_object_or_404(UserProfile, user_id=user_id)
+    return render(request, 'profiles/view_profile.html', {'userprofile': userprofile})
+
 
 def profile_list(request):
-    profiles = UserProfile.objects.all()
-    return render(request, 'welcome.html', {'profiles': profiles})
-
+    profiles = UserProfile.objects.all()  # Assuming 'created_at' is a DateTimeField in your model
+    return render(request, 'profiles/profile_selection.html', {'profiles': profiles })

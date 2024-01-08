@@ -11,17 +11,14 @@ class Customer(models.Model):
     DoB = models.DateField()
     phonenumber = models.CharField(max_length=15)
 
-    # Provide unique related_names for the groups and user_permissions fields
-    # groups = models.ManyToManyField(Group, related_name='customer_groups')
-    # user_permissions = models.ManyToManyField(Permission, related_name='customer_user_permissions')
-
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-
 class UserProfile(models.Model):
-    name = models.CharField(max_length=100)
-    bio = models.TextField()
-    image = models.ImageField(upload_to='profile_images/')
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE, primary_key=True)
+    name = models.CharField(max_length=255)
+    profile_image = models.ImageField(upload_to='profile_images/', blank=True, null=True)
+
+    def __str__(self):
+        return self.name
+
+
+
+

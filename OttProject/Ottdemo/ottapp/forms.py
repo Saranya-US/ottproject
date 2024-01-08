@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 
-from .models import Customer
+from .models import Customer, UserProfile
 
 
 class LoginForm(forms.Form):
@@ -19,5 +19,7 @@ class CustomerRegistrationForm(forms.ModelForm):
 
 
 
-class ProfileForm(forms.Form):
-    name = forms.CharField(max_length=255)
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['name', 'profile_image']
