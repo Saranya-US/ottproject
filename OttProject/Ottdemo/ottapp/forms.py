@@ -1,8 +1,9 @@
 # forms.py
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
+from django.utils.html import format_html
 
-from .models import Customer
+from .models import Customer, UserProfile
 
 
 class LoginForm(forms.Form):
@@ -15,9 +16,16 @@ class CustomerRegistrationForm(forms.ModelForm):
         fields = ['firstname', 'lastname', 'email', 'username', 'password', 'DoB', 'phonenumber']
         widgets = {
             'password1': forms.PasswordInput(),
+            'DoB': forms.DateInput(attrs={'type': 'date'}),
         }
 
 
+class VerifyPinForm(forms.Form):
+    pin = forms.CharField(widget=forms.PasswordInput(attrs={'maxlength': 6}))
 
-class ProfileForm(forms.Form):
-    name = forms.CharField(max_length=255)
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['name', 'image', 'pin', 'dob']
+
