@@ -1,22 +1,147 @@
-
-
+<!-- profiles/templates/profiles/profile_selection.html -->
 {% block body %}
-<div class="container mt-5">
-    <h2>Your Profiles</h2>
+<style>
+    body {
+        background-color: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+    .container {
+        text-align: center; /* Center text within the container */
+    }
+    .row {
+        display: flex;
+        justify-content: center; /* Center the profiles */
+        gap: 50px; /* Adjust the gap between profile cards */
+    }
+    .profile-card {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        position: relative;
+        width: 100px; /* Reduced width */
+        height: 130px; /* Reduced height */
+    }
+    .profile-card:hover {
+        transform: scale(1.05);
+    }
+    .profile-image {
+        width: 100%;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+        height: 80px; /* Adjusted height */
+        object-fit: cover;
+    }
+    .profile-details {
+        padding: 5px;
+        text-align: center; /* Center the text */
+    }
+<!--    .btn-add-profile {-->
+<!--        font-size: 18px; /* Adjusted font size */-->
+<!--        color: #007bff;-->
+<!--        cursor: pointer;-->
+<!--        transition: color 0.3s ease;-->
+<!--        display: block;-->
+<!--        margin: auto;-->
+<!--        margin-top: 5px;-->
+<!--        width: 100px; /* Reduced width */-->
+<!--        height: 120px; /* Reduced height */-->
+<!--    }-->
+
+
+    .btn-add-profile {
+        font-size: 18px; /* Adjusted font size */
+        color: black;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        display: block;
+        margin: auto;
+        margin-top: 5px;
+        width: 100px; /* Reduced width */
+        height: 80px; /* Reduced height */
+        background-color: #ddd; /* Updated color to #ddd */
+        border: 1px solid #ddd;
+        border-radius: 8px; /* Circular shape */
+        line-height: 60px; /* Vertically center the plus sign */
+    }
+
+    .btn-add-profile:hover {
+        color: #0056b3;
+    }
+    .add-profile-card {
+        background-color: white;
+        color: black;
+        border: 1px solid white;
+        text-align: center;
+        padding: 5px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: transform 0.3s ease;
+        position: relative;
+        width: 100px; /* Reduced width */
+        height: 120px; /* Reduced height */
+    }
+    .add-profile-card:hover {
+        transform: scale(1.05);
+    }
+    .add-profile-card:before {
+        content: '\02795';
+        font-size: 24px; /* Adjusted font size */
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+</style>
+
+<title>Your Profiles</title>
+
+<body>
+
+<div class="container">
+    <h2 class="text-center mb-4">Your Profiles</h2>
     <div class="row">
-        {% for i in profiles %}
-            <div class="col-md-4 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ i.name }}</h5>
-                        <!-- Additional details or actions here -->
-                    </div>
-                </div>
-            </div>
+        {% for profile in profiles %}
+            {% if profile.user.profile.dob %}
+                {% with age=profile.user.profile.calculate_age %}
+                    {% if age < 18 %}
+                        <a href="{% url 'kid_profile_details' profile.id %}" class="profile-card">
+                            <!-- Kid Profile -->
+                            <img src="{{ profile.image.url }}" class="profile-image" alt="{{ profile.name }}">
+                            <div class="profile-details">
+                                <h5 class="card-title">{{ profile.name }}</h5>
+                                <!-- You can add additional details or actions here for kids -->
+                            </div>
+                        </a>
+                    {% elif age >= 18 %}
+                        <a href="{% url 'verify_pin' profile.id %}" class="profile-card">
+                            <!-- Adult Profile -->
+                            <img src="{{ profile.image.url }}" class="profile-image" alt="{{ profile.name }}">
+                            <div class="profile-details">
+                                <h5 class="card-title">{{ profile.name }}</h5>
+                                <p>Enter PIN: <a href="{% url 'verify_pin' profile.id %}">Verify</a></p>
+                                <!-- You can add additional details or actions here for adults -->
+                            </div>
+                        </a>
+                    {% endif %}
+                {% endwith %}
+            {% endif %}
         {% endfor %}
+
+        <div class="profile-card">
+            <div class="add-profile-card" onclick="location.href='{% url 'add_profile' customer.id %}'">
+                <span class="btn-add-profile"></span>
+                <p class="text-uppercase font-weight-bold">Add Profile</p>
+            </div>
+        </div>
     </div>
-    <a href="{% url 'add_profile' %}" class="btn btn-primary">Add Profile</a>
 </div>
-
-
+</body>
 {% endblock %}
+

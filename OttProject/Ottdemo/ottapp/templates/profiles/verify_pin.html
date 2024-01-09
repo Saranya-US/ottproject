@@ -1,0 +1,12 @@
+<!-- profiles/templates/profiles/verify_pin.html -->
+
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2 class="text-center mb-4">Verify PIN</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+{% endblock %}

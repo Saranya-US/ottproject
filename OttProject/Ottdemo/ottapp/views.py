@@ -1,13 +1,8 @@
 from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login,authenticate
-from .forms import LoginForm, CustomerRegistrationForm,UserProfileForm
-from .models import Customer,UserProfile  # Corrected model name to follow PEP8 conventions
-from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
-from .forms import UserProfileForm
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
+from .forms import LoginForm, CustomerRegistrationForm, ProfileForm, VerifyPinForm
+from .models import Customer, Profile, UserProfile  # Corrected model name to follow PEP8 conventions
 
 def login_view(request):
     form = LoginForm()
@@ -21,7 +16,8 @@ def login_view(request):
             try:
                 customer = Customer.objects.get(username=username)
                 if customer.password == password:
-                    return render(request, 'profiles/profile_selection.html')
+                    customer_id = customer.id
+                    return redirect( 'profile_selection',customer_id = customer_id)
                 else:
                     form.add_error(None, 'Invalid credentials')
             except Customer.DoesNotExist:
@@ -45,57 +41,83 @@ def home(request):
     return render(request,'home.html')
 
 
-def profile_selection(request):
-    profiles = UserProfile.objects.filter(user=request.user)
-    return render(request, 'profiles/profile_selection.html', {'profiles': profiles})
+def profile_selection(request,customer_id):
+    customer=Customer.objects.get(id=customer_id)
+    profiles = UserProfile.objects.all()  # Fetch all profiles
+    return render(request, 'profiles/profile_selection.html', {'customer':customer,'profiles': profiles})
 
-
-@login_required
-def add_profile(request):
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES)
-        if form.is_valid():
-            profile = form.save(commit=False)
-            profile.customer = request.user
-            profile.save()
-            messages.success(request, 'Profile added successfully.')
-            return redirect('profile_selection')
-        else:
-            messages.error(request, 'Form is not valid.')
-    else:
-        form = UserProfileForm()
-
-    return render(request, 'profiles/add_profile.html', {'form': form})
-
-
-
-def profile(request):
-    user_profile = UserProfile.objects.get(user=request.user)
-    return render(request, 'profiles/profile.html', {'user_profile': user_profile})
-
-
-def edit_profile(request):
-    user_profile = UserProfile.objects.get(user=request.user)
-
-    if request.method == 'POST':
-        form = UserProfileForm(request.POST, request.FILES, instance=user_profile)
-        if form.is_valid():
-            form.save()
-            return redirect('profile')
-    else:
-        form = UserProfileForm(instance=user_profile)
-
-    return render(request, 'profiles/edit_profile.html', {'form': form})
-
-# views.py
-
-
-
-def view_profile(request, user_id):
-    userprofile = get_object_or_404(UserProfile, user_id=user_id)
-    return render(request, 'profiles/view_profile.html', {'userprofile': userprofile})
 
 
 def profile_list(request):
-    profiles = UserProfile.objects.all()  # Assuming 'created_at' is a DateTimeField in your model
-    return render(request, 'profiles/profile_selection.html', {'profiles': profiles })
+    profiles = UserProfile.objects.all()
+    return render(request, 'welcome.html', {'profiles': profiles})
+
+def verify_pin(request, profile_id):
+    profile = get_object_or_404(UserProfile, id=profile_id)
+
+    if request.method == 'POST':
+        form = VerifyPinForm(request.POST)
+        if form.is_valid() and profile.check_pin(form.cleaned_data['pin']):
+            return redirect('welcome')  # Redirect to the welcome page upon successful PIN verification
+        else:
+            form.add_error('pin', 'Invalid PIN')
+    else:
+        form = VerifyPinForm()
+
+    return render(request, 'profiles/verify_pin.html', {'form': form, 'profile': profile})
+
+
+def add_profile(request, customer_id):
+    template_name = 'profiles/add_profile.html'
+    customer = None
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            customer = get_object_or_404(Customer, id=customer_id)
+
+            # Create a UserProfile instance but don't save it yet
+            profile = form.save(commit=False)
+
+            # Associate the profile with the customer
+            profile.user = customer
+
+            # Optionally set the PIN using the set_pin method in UserProfile model
+            # profile.set_pin(form.cleaned_data['pin'])
+
+            # Save the profile to the database
+            profile.save()
+
+            # Redirect to a success page or any other desired page
+            return redirect('profile_selection', customer_id=customer.id)
+        else:
+            form.add_error('image', 'Invalid avatar choice')  # Handle invalid choice
+    else:
+        form = ProfileForm()
+
+    return render(request, template_name, {'customer': customer, 'form': form})
+
+
+def store_profile_details(request, customer_id):
+    customer = Customer.objects.get(id=customer_id)
+
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            # Create a UserProfile instance but don't save it yet
+            profile = form.save(commit=False)
+
+            # Associate the profile with the customer
+            profile.customer = customer
+
+            # Save the profile to the database
+            profile.save()
+
+            # Redirect to a success page or any other desired page
+            return redirect('profile_selection', customer_id=customer.id)
+        else:
+            form.add_error('image', 'Invalid avatar choice')  # Handle invalid choice
+    else:
+        form = ProfileForm()
+
+    return render(request, 'add_profile.html', {'customer': customer, 'form': form})
