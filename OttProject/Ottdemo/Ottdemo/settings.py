@@ -71,26 +71,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'Ottdemo.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': BASE_DIR / 'db.sqlite3',
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'ott',
-#         'USER': 'root',
-#         'PASSWORD':'bala123',
-#         'HOST':'localhost',
-#         'PORT': 3306
-#     }
-# }
 
 
 DATABASES = {
@@ -98,7 +78,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'ott',
         'USER': 'root',
-        'PASSWORD':'stiji@2001',
+        'PASSWORD':'bala123',
         'HOST':'localhost',
         'PORT': 3306
     }
@@ -146,6 +126,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
+
 MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
 

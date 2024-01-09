@@ -1,4 +1,5 @@
 
+
 from django.urls import path
 from .views import home, login_view, register_view, add_profile, profile_selection, profile_list, verify_pin, \
     store_profile_details, ErrorPageView, register_kid_profile, welcome
@@ -17,5 +18,4 @@ urlpatterns = [
     path('welcome/', welcome, name='welcome'),
 
 ]
-
 
