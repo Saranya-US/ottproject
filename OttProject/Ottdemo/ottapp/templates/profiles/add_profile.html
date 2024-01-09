@@ -9,6 +9,11 @@
       <div class="card-body">
         <h2 class="card-title text-center mb-4">Add New Profile</h2>
         {{ customer.id }}
+
+        {% if limit_reached %}
+            <p class="text-danger">You can create a maximum of 4 profiles only.</p>
+        {% endif %}
+
         <form method="post" action="#" enctype="multipart/form-data">
           {% load static %}
           {% csrf_token %}

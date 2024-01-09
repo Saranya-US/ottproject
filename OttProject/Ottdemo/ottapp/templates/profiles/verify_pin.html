@@ -1,12 +1,17 @@
 <!-- profiles/templates/profiles/verify_pin.html -->
 
-{% extends 'base.html' %}
 
-{% block content %}
+{% block body %}
   <h2 class="text-center mb-4">Verify PIN</h2>
-  <form method="post">
+  <!-- verify_pin.html -->
+<form method="post" action="{% url 'verify_pin' user_profile_id=user_profile.id %}">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Submit</button>
-  </form>
+    <button type="submit">Verify PIN</button>
+
+    {% if form.errors %}
+        <p class="error-message">{{ form.errors.pin.0 }}</p>
+    {% endif %}
+</form>
+
 {% endblock %}

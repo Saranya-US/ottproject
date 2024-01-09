@@ -3,7 +3,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.utils.html import format_html
 
-from .models import Customer, UserProfile
+from .models import Customer, UserProfile, KidsProfile
 
 
 class LoginForm(forms.Form):
@@ -29,3 +29,9 @@ class ProfileForm(forms.ModelForm):
         model = UserProfile
         fields = ['name', 'image', 'pin', 'dob']
 
+
+# forms.py
+class KidProfileForm(forms.ModelForm):
+    class Meta:
+        model = KidsProfile
+        fields = ['name', 'image']

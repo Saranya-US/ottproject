@@ -98,6 +98,18 @@
         left: 50%;
         transform: translate(-50%, -50%);
     }
+
+    .profile-link {
+        color: inherit; /* Use the default text color */
+        text-decoration: none; /* Remove the underline */
+        cursor: pointer; /* Set the cursor to pointer to indicate interactivity */
+    }
+
+    .profile-link:hover {
+        color: inherit; /* Use the default text color on hover */
+        text-decoration: underline; /* Underline on hover if desired */
+    }
+
 </style>
 
 <title>Your Profiles</title>
@@ -105,39 +117,44 @@
 <body>
 
 <div class="container">
-    <h2 class="text-center mb-4">Your Profiles</h2>
+    <h2 class="text-center mb-4">Adult Profiles</h2>
     <div class="row">
-        {% for profile in profiles %}
-            {% if profile.user.profile.dob %}
-                {% with age=profile.user.profile.calculate_age %}
-                    {% if age < 18 %}
-                        <a href="{% url 'kid_profile_details' profile.id %}" class="profile-card">
-                            <!-- Kid Profile -->
-                            <img src="{{ profile.image.url }}" class="profile-image" alt="{{ profile.name }}">
-                            <div class="profile-details">
-                                <h5 class="card-title">{{ profile.name }}</h5>
-                                <!-- You can add additional details or actions here for kids -->
-                            </div>
-                        </a>
-                    {% elif age >= 18 %}
-                        <a href="{% url 'verify_pin' profile.id %}" class="profile-card">
-                            <!-- Adult Profile -->
-                            <img src="{{ profile.image.url }}" class="profile-image" alt="{{ profile.name }}">
-                            <div class="profile-details">
-                                <h5 class="card-title">{{ profile.name }}</h5>
-                                <p>Enter PIN: <a href="{% url 'verify_pin' profile.id %}">Verify</a></p>
-                                <!-- You can add additional details or actions here for adults -->
-                            </div>
-                        </a>
-                    {% endif %}
-                {% endwith %}
-            {% endif %}
+        {% for profile in adult_profiles %}
+            <a href="{% url 'verify_pin' user_profile_id=profile.id %}" class="profile-link">
+                <div class="profile-card">
+                    <img src="{{ profile.image.url }}" class="profile-image" alt="{{ profile.name }}">
+                    <div class="profile-details">
+                        <h5 class="card-title">{{ profile.name }}</h5>
+                        <!-- Add any additional details or actions here -->
+                    </div>
+                </div>
+            </a>
         {% endfor %}
 
         <div class="profile-card">
             <div class="add-profile-card" onclick="location.href='{% url 'add_profile' customer.id %}'">
                 <span class="btn-add-profile"></span>
-                <p class="text-uppercase font-weight-bold">Add Profile</p>
+                <p class="text-uppercase font-weight-bold">Adult Profile</p>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="text-center mb-4 mt-5"> Kids' Profile</h2>
+    <div class="row">
+        {% for profile in kids_profiles %}
+            <div class="profile-card">
+                <img src="{{ profile.image.url }}" class="profile-image" alt="{{ profile.name }}">
+                <div class="profile-details">
+                    <h5 class="card-title">{{ profile.name }}</h5>
+                    <!-- Add any additional details or actions here -->
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="profile-card">
+            <div class="add-profile-card" onclick="location.href='{% url 'add_kids_profile' customer.id %}'">
+                <span class="btn-add-profile"></span>
+                <p class="text-uppercase font-weight-bold">Kid Profile</p>
             </div>
         </div>
     </div>

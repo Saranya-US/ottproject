@@ -32,22 +32,56 @@ class UserProfile(models.Model):
     pin = models.CharField(max_length=6, null=True, blank=True)  # Hashed PIN
     dob = models.DateField(null=True, blank=True)
 
-    # Date of Birth
-    def is_kid(self):
-        # Add your logic to determine if the user is a kid (e.g., age check)
-        # Return True if it's a kid, False otherwise
-        return True if self.calculate_age() < 18 else False
     def set_pin(self, raw_pin):
         self.pin = make_password(raw_pin)
 
     def check_pin(self, raw_pin):
         return check_password(raw_pin, self.pin) if self.pin else False
 
-    def calculate_age(self):
-        if self.dob:
-            today = date.today()
-            return today.year - self.dob.year - ((today.month, today.day) < (self.dob.month, self.dob.day))
-        return None
-
     def __str__(self):
         return self.name
+
+
+class KidsProfile(models.Model):
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='profile_images/')
+
+class Adult_Movie(models.Model):
+    title = models.CharField(max_length=255)
+    genre = models.CharField(max_length=100)
+    release_date = models.DateField()
+    language = models.CharField(max_length=100)
+    actor = models.CharField(max_length=100)
+    actress = models.CharField(max_length=100)
+    director = models.CharField(max_length=100)
+    ratings = models.FloatField(default=0.0)  # Ratings on a scale from 0 to 5
+    image = models.ImageField(upload_to='movie_image/')
+    video = models.FileField(upload_to='movie_videos/')
+
+
+class Kids_Movie(models.Model):
+    title = models.CharField(max_length=255)
+    genre = models.CharField(max_length=100)
+    release_date = models.DateField()
+    language = models.CharField(max_length=100)
+    actor = models.CharField(max_length=100)
+    director = models.CharField(max_length=100)
+    ratings = models.FloatField(default=0.0)  # Ratings on a scale from 0 to 5
+    image = models.ImageField(upload_to='movie_image/')
+    video = models.FileField(upload_to='movie_videos/')
+
+class Adult_WatchHistory(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Adult_Movie, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+class Adult_WatchLater(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    movie = models.ForeignKey(Adult_Movie, on_delete=models.CASCADE)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+class Adult_Suggestions(models.Model):
+    user = models.ForeignKey(UserProfile, on_delete=models.CASCADE)
+    suggested_movie = models.ForeignKey(Adult_Movie, on_delete=models.CASCADE)
+
